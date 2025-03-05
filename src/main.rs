@@ -32,4 +32,8 @@ fn main() {
         "{:?} {:?} {:?} {:?}",
         from_currency, to_currency, date, value
     );
+
+    let result = exchange::Exchange::new(&from_currency, &date);
+
+    println!("{:?}", result.get_rates(value, &to_currency));
 }
