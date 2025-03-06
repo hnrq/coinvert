@@ -1,13 +1,16 @@
 use serde::Deserialize;
 use std::collections::HashMap;
 
+pub mod currencies {
+    include!(concat!(env!("OUT_DIR"), "/currencies.rs"));
+}
+
 #[derive(Deserialize, Debug)]
 pub struct Exchange {
     #[serde(skip_deserializing)]
     currency: String,
 
-    #[allow(dead_code)]
-    date: String,
+    pub date: String,
 
     #[serde(flatten)]
     rates: HashMap<String, HashMap<String, f64>>,
