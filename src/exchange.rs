@@ -31,13 +31,57 @@ impl Exchange {
         response
     }
 
-    pub fn get_rates(&self, value: f64, target_currencies: &Vec<String>) -> HashMap<String, f64> {
-        self.rates
-            .get(&self.currency)
-            .unwrap()
+    pub fn get_rates<T: AsRef<str> + std::fmt::Display>(
+        &self,
+        value: f64,
+        target_currencies: &[T],
+    ) -> HashMap<String, f64> {
+        let currency_rates = self.rates.get(&self.currency).unwrap();
+        target_currencies
             .iter()
-            .filter(|&(k, _v)| target_currencies.contains(&k.to_uppercase()))
-            .map(|(k, v)| (k.to_uppercase(), v * value))
+            .map(|target_currency| {
+                (
+                    target_currency.to_string(),
+                    currency_rates
+                        .get(&target_currency.to_string().to_lowercase())
+                        .unwrap()
+                        * value,
+                )
+            })
             .collect()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rand::prelude::*;
+
+    #[test]
+    fn test_get_rates() {
+        let mut rng = rand::rng();
+        let currency = String::from("USD");
+        let mut rates = HashMap::<String, HashMap<String, f64>>::new();
+        let target_currencies = ["BRL", "EUR", "CNY"];
+        let usd_rates: HashMap<String, f64> = target_currencies
+            .iter()
+            .map(|c| (c.to_lowercase(), rng.random::<f64>()))
+            .collect();
+        rates.insert(currency.clone(), usd_rates.clone());
+        let value: f64 = rng.random::<f64>();
+
+        let exchange = Exchange {
+            currency,
+            date: String::from("2023-10-10"),
+            rates,
+        };
+
+        let result = exchange.get_rates(value, &vec!["BRL", "EUR", "CNY"]);
+        for currency in target_currencies {
+            assert_eq!(
+                *result.get(currency).unwrap(),
+                usd_rates.get(&currency.to_lowercase()).unwrap() * value
+            );
+        }
     }
 }
