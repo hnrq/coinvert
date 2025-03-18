@@ -18,8 +18,8 @@ fn main() {
     .json::<Currencies>()
     .unwrap()
     .currencies
-    .iter()
-    .map(|(k, _v)| k.to_uppercase())
+    .keys()
+    .map(|k| k.to_uppercase())
     .collect();
 
     let out_dir = std::env::var_os("OUT_DIR").unwrap();
@@ -28,7 +28,7 @@ fn main() {
     std::fs::write(
         &path,
         format!(
-            "pub static VALID_CURRENCIES:[&'static str; {}] = {:?};",
+            "pub static VALID_CURRENCIES:[&str; {}] = {:?};",
             currencies.len(),
             currencies,
         ),
