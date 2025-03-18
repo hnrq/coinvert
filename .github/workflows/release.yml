@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: clippy, rustfmt
+
+      - name: Cache Cargo registry index
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/registry/index
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/registry/cache
+          key: ${{ runner.os }}-cargo-cache-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache Cargo build artifacts
+        uses: actions/cache@v4
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Run tests
+        run: cargo test --verbose
+
+      - name: Run clippy
+        run: cargo clippy -- -D warnings
+
+      - name: Run fmt
+        run: cargo fmt --all -- --check
+
+      - name: Set up git user
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+
+      - name: Determine next version
+        id: version
+        run: |
+          VERSION=$(cargo semver --bump patch)
+          echo "::set-output name=next_version::$VERSION"
+
+      - name: Update Cargo.toml
+        run: |
+          cargo set-version ${{ steps.version.outputs.next_version }}
+
+      - name: Commit Cargo.toml
+        run: |
+          git add Cargo.toml
+          git commit -m "chore: bump version to ${{ steps.version.outputs.next_version }}"
+
+      - name: Create tag
+        run: |
+          git tag ${{ steps.version.outputs.next_version }}
+          git push origin ${{ steps.version.outputs.next_version }}
+
+      - name: Push changes
+        run: git push
+
+      - name: Publish to crates.io
+        uses: actions-rs/cargo@v1
+        with:
+          command: publish
+          token: ${{ secrets.CRATES_IO_TOKEN }}
+        if: ${{ !startsWith(steps.version.outputs.next_version, '0.0.0') }}
