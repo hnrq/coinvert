@@ -1,7 +1,7 @@
 [![Release](https://github.com/hnrq/coinvert/actions/workflows/release.yml/badge.svg)](https://github.com/hnrq/coinvert/actions/workflows/release.yml)
 
 # Coinvert
-A fast and flexible command-line currency converter that provides real-time and historical exchange rates.
+A fast and flexible command-line currency converter that provides historical exchange rates.
 
 ## Project Description
 
@@ -10,9 +10,8 @@ Coinvert is a Rust-based CLI tool for currency conversion that uses real-time ex
 ## Features
 
 - Convert between 170+ currencies using their ISO-4217 codes
-- Real-time exchange rates from cdn.jsdelivr.net
+- Exchange rates from [exchange-api](https://github.com/fawazahmed0/exchange-api)
 - Historical exchange rates lookup
-- Multiple output formats (text, JSON, etc.)
 - Fast and efficient with minimal dependencies
 - Simple and intuitive command-line interface
 - Cross-platform support
@@ -26,6 +25,16 @@ If you have Rust installed, you can install Coinvert directly from crates.io:
 ```
 cargo install coinvert
 ```
+
+### Using Install Script (Linux and macOS)
+
+You can install Coinvert using our installation script:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/hnrq/coinvert/main/install.sh | bash
+```
+
+This script will automatically download and install the latest version of Coinvert for your system.
 
 ### Download Prebuilt Binaries
 
