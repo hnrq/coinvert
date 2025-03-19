@@ -1,4 +1,6 @@
+[![Build](https://github.com/hnrq/coinvert/actions/workflows/ci.yml/badge.svg)](https://github.com/hnrq/coinvert/actions/workflows/ci.yml)
 [![Release](https://github.com/hnrq/coinvert/actions/workflows/release.yml/badge.svg)](https://github.com/hnrq/coinvert/actions/workflows/release.yml)
+[![crates.io](https://img.shields.io/crates/v/coinvert.svg)](https://crates.io/crates/coinvert)
 
 # Coinvert
 A fast and flexible command-line currency converter that provides historical exchange rates.
