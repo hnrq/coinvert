@@ -1,23 +1,25 @@
 #!/bin/bash
 set -e
 
+# Handle CRLF line endings for scripts piped through curl
+if [ ! -t 0 ]; then
+    # Script is being executed via a pipe (stdin is not a terminal)
+    script_content=$(cat)
+    echo "$script_content" | sed 's/\r//g' | bash
+    exit $?
+fi
 # Detect platform and architecture
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m)
 
-# Map architecture names
-case $ARCH in
-    x86_64)
-        ARCH="x86_64"
-        ;;
-    aarch64)
-        ARCH="aarch64"
-        ;;
-    *)
-        echo "Unsupported architecture: $ARCH"
-        exit 1
-        ;;
-esac
+# Check for x86_64 architecture
+if [ "$ARCH" != "x86_64" ]; then
+    echo "Error: Only x86_64 architecture is supported."
+    exit 1
+fi
+
+# Set architecture for binary naming
+ARCH="x86_64"
 
 # Get the latest release information from GitHub API
 echo "Fetching latest release..."
@@ -49,4 +51,3 @@ cd - > /dev/null
 rm -rf "$TMP_DIR"
 
 echo "Coinvert ${VERSION} has been installed successfully!"
-

@@ -14,38 +14,47 @@ Coinvert is a Rust-based CLI tool for currency conversion that uses real-time ex
 - Historical exchange rates lookup
 - Fast and efficient with minimal dependencies
 - Simple and intuitive command-line interface
-- Cross-platform support
 
 ## Installation
 
-### Using Cargo
-
-If you have Rust installed, you can install Coinvert directly from crates.io:
-
-```
-cargo install coinvert
-```
+**Important: Coinvert currently only supports x86_64 architecture. It will not work on ARM-based systems (like Raspberry Pi or Apple Silicon M1/M2 without Rosetta).**
 
 ### Using Install Script (Linux and macOS)
 
-You can install Coinvert using our installation script:
+The fastest way to install Coinvert on x86_64 systems is using our installation script:
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/hnrq/coinvert/main/install.sh | bash
 ```
 
-This script will automatically download and install the latest version of Coinvert for your system.
+This script will:
+- Automatically detect your operating system
+- Download the appropriate prebuilt binary for your system
+- Install it to `/usr/local/bin/` (may require sudo permission)
+- Make it executable and ready to use
 
-### Download Prebuilt Binaries
+### Using Cargo
 
-You can download prebuilt binaries for your platform from the [releases page](https://github.com/username/coinvert/releases).
+If you have Rust installed, you can install Coinvert directly from crates.io:
 
-After downloading, make the binary executable and place it in your PATH:
+```bash
+cargo install coinvert
+```
+
+### Manual Installation (Prebuilt Binaries)
+
+If you prefer to manually install, you can download prebuilt binaries for x86_64 Linux and macOS from the [releases page](https://github.com/hnrq/coinvert/releases).
+
+After downloading:
+1. Make the binary executable
+2. Move it to a directory in your PATH
 
 ```bash
 chmod +x coinvert
 sudo mv coinvert /usr/local/bin/
 ```
+
+This method gives you control over the installation process and allows you to verify the binary before installation.
 
 ## Usage
 

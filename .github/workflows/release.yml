@@ -12,7 +12,7 @@ env:
 jobs:
   build-and-release:
     name: Build and Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,14 +21,12 @@ jobs:
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
-
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
 
       - name: Extract version from tag
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-
       - name: Build release binary
         run: |
           cargo build --release
@@ -42,18 +40,32 @@ jobs:
         run: |
           BINARY_NAME=$(grep -m 1 '^name =' Cargo.toml | sed 's/name = "\(.*\)"/\1/')
           echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_OUTPUT
+      - name: Prepare release artifact
+        run: |
+          RELEASE_NAME=${{ steps.get_binary_name.outputs.BINARY_NAME }}-v${{ steps.get_version.outputs.VERSION }}-x86_64-linux
+          cp target/release/${{ steps.get_binary_name.outputs.BINARY_NAME }} $RELEASE_NAME
+          echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
 
       - name: Create GitHub Release
-        id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            target/release/${{ steps.get_binary_name.outputs.BINARY_NAME }}
+          files: ${{ env.RELEASE_NAME }}
           draft: false
           prerelease: false
           generate_release_notes: true
           name: v${{ steps.get_version.outputs.VERSION }}
           tag_name: ${{ github.ref }}
+
+  publish-crates:
+    name: Publish to crates.io
+    needs: build-and-release
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Verify crates.io token exists
         run: |
