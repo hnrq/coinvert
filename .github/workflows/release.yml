@@ -29,7 +29,8 @@ jobs:
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
       - name: Build release binary
         run: |
-          cargo build --release
+          RUSTFLAGS="-Zlocation-detail=none"
+          cargo +nightly build --release
           if [ $? -ne 0 ]; then
             echo "::error::Release build failed"
             exit 1
