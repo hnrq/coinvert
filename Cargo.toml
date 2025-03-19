@@ -1,7 +1,15 @@
 [package]
 name = "coinvert"
 version = "0.0.1"
-edition = "2021"
+edition = "2024"
+authors = ["Henrique <henriquealberone@outlook.com>"]
+description = "A fast and flexible command-line currency converter that provides historical exchange rates."
+readme = "README.md"
+repository = "https://github.com/hnrq/coinvert"
+license = "MIT"
+keywords = ["currency", "exchange", "coin", "converter"]
+categories = ["command-line-utilities", "finance"]
+build = "build.rs"
 
 [build-dependencies]
 reqwest = { version = "0.12.12", features = ["blocking", "json"] }

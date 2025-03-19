@@ -52,7 +52,7 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: true
-          name: Release v${{ steps.get_version.outputs.VERSION }}
+          name: v${{ steps.get_version.outputs.VERSION }}
           tag_name: ${{ github.ref }}
 
       - name: Verify crates.io token exists
